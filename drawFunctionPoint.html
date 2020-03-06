@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title></title>
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+	<style type="text/css">
+		canvas{
+			border: 1px black solid;
+		}
+	</style>
+</head>
+<body>
+
+
+<h2>Value of x: <span id="valueOfX"></span>	</h2>
+<h3></h3>
+<canvas id="canvas" width="900" height="500" ></canvas>
+<script>
+	var initPoint;
+
+	$("#canvas").click(function(e){
+		if (initPoint) {
+			drawLine(e);
+			initPoint = null;
+		}
+		else{
+			initPoint = initialPoint(e);
+		}
+
+	});
+
+	var pointSize = 2;
+
+	function initialPoint(event){
+	  	var rect = canvas.getBoundingClientRect();
+
+	  	var x = event.clientX - rect.left;
+	    var y = event.clientY - rect.top;
+
+	    var point = new Point(x,y);
+
+	     drawPoint(point);
+
+	     return point;
+	}
+
+	function Point(x,y){
+			var obj = {};
+			obj.x = x;
+			obj.y = y;
+			return obj;
+	}
+
+	function drawLine(event){
+	     var rect = canvas.getBoundingClientRect();
+	     var x = event.clientX - rect.left;
+	     var y = event.clientY - rect.top;
+
+	     var newPoint = new Point(x,y);
+
+      drawPoint(newPoint);
+
+       var smallestX = newPoint.x;
+       var biggestX = initPoint.x;
+
+       if(newPoint.x > initPoint.x){
+         smallestX = initPoint.x;
+         biggestX = newPoint.x
+       }
+
+       var AandB = new findAandB(initPoint,newPoint);
+
+			 $("h3").text("y = " + AandB.a.toFixed(2) + " * x + " + AandB.b.toFixed(2))
+       console.log(AandB);
+
+       var i = smallestX;
+
+       var distanceBetweenDots = 5;
+
+         var inter = setInterval(function(){
+            var drPoint = new Point(i,(AandB.a*i)+AandB.b);
+
+            if(i > biggestX-distanceBetweenDots){
+              clearInterval(inter);
+            }
+
+   			    drawPoint(drPoint);
+            i= i+distanceBetweenDots;
+            $("#valueOfX").text("value of x: "+i);
+   			},500);
+
+
+    }
+
+  function forLoop(smallestX,biggestX){
+
+  }
+
+  function findAandB(point1,point2){
+    var obj = {};
+
+    var a = (point1.y-point2.y)/(point1.x-point2.x);
+    var b = point1.y - (a * point1.x);
+
+    obj.a = a;
+    obj.b = b;
+    return obj;
+  }
+
+
+
+	function drawPoint(point){
+	  	var ctx = document.getElementById("canvas").getContext("2d");
+
+
+	  	ctx.fillStyle = "#ff2626"; // Red color
+
+	    ctx.beginPath();
+	    ctx.arc(point.x, point.y, pointSize, 0, Math.PI * 2, true);
+	    ctx.fill();
+	}
+</script>
+</body>
+</html>

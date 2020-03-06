@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="utf-8">
+    <title></title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <style media="screen">
+
+    canvas{
+      border: 1px black solid;
+    }
+
+    .clearfix::after {
+        content: "";
+        clear: both;
+        display: table;
+    }
+    </style>
+  </head>
+  <body>
+    <form class="" id="form" method="post" >
+      <input type="number" id="degree" placeholder="degree"  style="float:left;">
+      <button type="button" name="bspline" onclick="drawBSpline()">Draw B spline curve</button>
+    </form>
+
+    <canvas id="canvas" width="900" height="500" ></canvas>
+    <script>
+    	var points = [];
+      var knots = [];
+      var degree = 0;
+
+    	function Clear(){
+    		location.reload();
+    	}
+
+    	$("#canvas").click(function(e){
+        var point = setPointFromUser(e);
+        points.push(point);
+        if(points.length >1){
+          drawLine(points[points.length-2],points[points.length-1]);
+        }
+    	})
+
+      function drawBSpline(){
+          degree = parseInt(document.getElementById("degree").value);
+          if(points.length < degree + 1){
+            alert("please add more points");
+            return 0;
+          }
+
+          setKnots()
+
+
+      }
+
+      function setKnots(){
+        var size = points.length + degree + 1;
+        var  knot = 0;
+        for(var i = 0; i < size; i++){
+          if(i <= degree){
+            knots.push(knot);
+          }
+          else if (i >size - (degree+1)) {
+            knots.push(knot);
+          }
+          else{
+            knot++;
+            knots.push(knot)
+          }
+        }
+
+        console.log(knots);
+      }
+
+      function setPointFromUser(event){
+    	  	var rect = canvas.getBoundingClientRect();
+
+    	  	var x = event.clientX - rect.left;
+    	    var y = event.clientY - rect.top;
+
+    	    var point = new Point(x,y);
+    			console.log(point);
+
+    	     drawRedPoint(point);
+    	     return point;
+    	}
+
+      function drawLine(point1,point2){
+           var iter = 10;
+
+           recursive(point1,point2,iter);
+      }
+
+      function recursive(point1,point2,iter){
+        if(iter == 0){
+          return 1;
+        }
+
+          var x = (point1.x + point2.x)/2;
+          var y = (point1.y + point2.y)/2;
+
+          var midllePoint = new Point(x,y);
+
+          drawRedPoint(midllePoint);
+
+          iter= iter - 1;
+
+          recursive(point2,midllePoint,iter);
+          recursive(point1,midllePoint,iter);
+      }
+
+      function drawGreenPoint(point){
+          var ctx = document.getElementById("canvas").getContext("2d");
+
+
+          ctx.fillStyle = "#458B00"; // Green color
+
+          ctx.beginPath();
+          ctx.arc(point.x, point.y, pointSize, 0, Math.PI * 2, true);
+          ctx.fill();
+      }
+
+      function drawRedPoint(point){
+          var ctx = document.getElementById("canvas").getContext("2d");
+
+
+          ctx.fillStyle = "#ff2626"; // Red color
+
+          ctx.beginPath();
+          ctx.arc(point.x, point.y, 2, 0, Math.PI * 2, true);
+          ctx.fill();
+      }
+
+      function findMiddlePoint(line){
+        var x = (line.point1.x + line.point2.x)/2;
+          var y = (line.point1.y + line.point2.y)/2;
+
+          var point = new Point(x,y);
+
+          return point;
+      }
+
+        function Point(x,y){
+            var obj = {};
+            obj.x = x;
+            obj.y = y;
+            return obj;
+        }
+
+        function Line(point1,point2){
+          var obj = {};
+          obj.point1 = point1;
+          obj.point2 = point2;
+          return obj;
+        }
+    </script>
+  </body>
+</html>
