@@ -12,20 +12,21 @@
     <body>
         <canvas id="canvas" width="900" height="500"></canvas>
         <script>
-            var init;
+            var firstPoint;
+            var secondPoint;
 
             $('#canvas').click(function (e) {
-                if (init) {
+                if (firstPoint) {
+                    secondPoint = initPoint(e);
                     drawLine(e);
-                    init = null;
                 } else {
-                    init = initialPoint(e);
+                    firstPoint = initPoint(e);
                 }
             });
 
             var pointSize = 2;
 
-            function initialPoint(event) {
+            function initPoint(event) {
                 var rect = canvas.getBoundingClientRect();
 
                 var x = event.clientX - rect.left;
@@ -33,32 +34,17 @@
 
                 var point = new Point(x, y);
 
-                drawPoint(point);
+                drawPoint(point, '#228b22');
                 return point;
             }
 
-            function Point(x, y) {
-                var obj = {};
-                obj.x = x;
-                obj.y = y;
-                return obj;
-            }
-
             function drawLine(event) {
-                var rect = canvas.getBoundingClientRect();
-                var x = event.clientX - rect.left;
-                var y = event.clientY - rect.top;
-
-                var newPoint = new Point(x, y);
-
                 var iter = 5;
 
-                var midllePoint = new Point((init.x + newPoint.x) / 2, (init.y + newPoint.y) / 2);
+                var middlePoint = new Point((firstPoint.x + secondPoint.x) / 2, (firstPoint.y + secondPoint.y) / 2);
 
-                drawPoint(newPoint);
-
-                drawPoint(midllePoint);
-                recursive(init, newPoint, iter);
+                drawPoint(middlePoint, '#ff2626');
+                recursive(firstPoint, secondPoint, iter);
             }
 
             function recursive(point1, point2, iter) {
@@ -69,26 +55,33 @@
                 var x = (point1.x + point2.x) / 2;
                 var y = (point1.y + point2.y) / 2;
 
-                var midllePoint = new Point(x, y);
+                var middlePoint = new Point(x, y);
 
-                drawPoint(midllePoint);
+                drawPoint(middlePoint, '#ff2626');
 
                 iter = iter - 1;
 
                 setTimeout(function () {
-                    recursive(point2, midllePoint, iter);
-                    recursive(point1, midllePoint, iter);
+                    recursive(point2, middlePoint, iter);
+                    recursive(point1, middlePoint, iter);
                 }, 1500);
             }
 
-            function drawPoint(point) {
+            function drawPoint(point, color) {
                 var ctx = document.getElementById('canvas').getContext('2d');
 
-                ctx.fillStyle = '#ff2626'; // Red color
+                ctx.fillStyle = color; // Red color
 
                 ctx.beginPath();
                 ctx.arc(point.x, point.y, pointSize, 0, Math.PI * 2, true);
                 ctx.fill();
+            }
+
+            function Point(x, y) {
+                var obj = {};
+                obj.x = x;
+                obj.y = y;
+                return obj;
             }
         </script>
     </body>

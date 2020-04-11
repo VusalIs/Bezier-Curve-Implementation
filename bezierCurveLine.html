@@ -14,20 +14,21 @@
         <h3></h3>
         <canvas id="canvas" width="900" height="500"></canvas>
         <script>
-            var initPoint;
+            var firstPoint;
+            var secondPoint;
 
             $('#canvas').click(function (e) {
-                if (initPoint) {
+                if (firstPoint) {
+                    secondPoint = initPoint(e);
                     drawLine(e);
-                    initPoint = null;
                 } else {
-                    initPoint = initialPoint(e);
+                    firstPoint = initPoint(e);
                 }
             });
 
             var pointSize = 2;
 
-            function initialPoint(event) {
+            function initPoint(event) {
                 var rect = canvas.getBoundingClientRect();
 
                 var x = event.clientX - rect.left;
@@ -40,62 +41,40 @@
                 return point;
             }
 
-            function Point(x, y) {
-                var obj = {};
-                obj.x = x;
-                obj.y = y;
-                return obj;
-            }
-
             function drawLine(event) {
-                var rect = canvas.getBoundingClientRect();
-                var x = event.clientX - rect.left;
-                var y = event.clientY - rect.top;
-
-                var newPoint = new Point(x, y);
-
-                drawPoint(newPoint);
-
-                var smallestX = newPoint.x;
-                var biggestX = initPoint.x;
-
-                if (newPoint.x > initPoint.x) {
-                    smallestX = initPoint.x;
-                    biggestX = newPoint.x;
+                if (firstPoint.x > secondPoint.x) {
+                    var tempPoint = firstPoint;
+                    firstPoint = secondPoint;
+                    secondPoint = tempPoint;
                 }
 
-                var AandB = new findAandB(initPoint, newPoint);
+                var MandB = findMandB(firstPoint, secondPoint);
 
-                $('h3').text('y = ' + AandB.a.toFixed(2) + ' * x + ' + AandB.b.toFixed(2));
-                console.log(AandB);
-
-                var i = smallestX;
-
-                var distanceBetweenDots = 5;
-
+                var distanceBetweenDots = 10;
+                var x = firstPoint.x;
                 var inter = setInterval(function () {
-                    var drPoint = new Point(i, AandB.a * i + AandB.b);
+                    var nextPoint = Point(x, MandB.m * x + MandB.b);
 
-                    if (i > biggestX - distanceBetweenDots) {
+                    if (x > secondPoint.x - distanceBetweenDots) {
                         clearInterval(inter);
                     }
 
-                    drawPoint(drPoint);
-                    i = i + distanceBetweenDots;
-                    $('#valueOfX').text(i);
+                    drawPoint(nextPoint);
+                    x = x + distanceBetweenDots;
+                    $('#valueOfX').text(x);
                 }, 200);
             }
 
-            function forLoop(smallestX, biggestX) {}
-
-            function findAandB(point1, point2) {
+            function findMandB(point1, point2) {
                 var obj = {};
 
-                var a = (point1.y - point2.y) / (point1.x - point2.x);
-                var b = point1.y - a * point1.x;
+                var m = (point1.y - point2.y) / (point1.x - point2.x);
+                var b = point1.y - m * point1.x;
 
-                obj.a = a;
+                obj.m = m;
                 obj.b = b;
+
+                $('h3').text('y = ' + m.toFixed(2) + ' * x + ' + b.toFixed(2));
                 return obj;
             }
 
@@ -107,6 +86,13 @@
                 ctx.beginPath();
                 ctx.arc(point.x, point.y, pointSize, 0, Math.PI * 2, true);
                 ctx.fill();
+            }
+
+            function Point(x, y) {
+                var obj = {};
+                obj.x = x;
+                obj.y = y;
+                return obj;
             }
         </script>
     </body>

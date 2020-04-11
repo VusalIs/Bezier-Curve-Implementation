@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title></title>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+        <style type="text/css">
+            canvas {
+                border: 1px black solid;
+            }
+        </style>
+    </head>
+    <body>
+        <h1>Select 3 points</h1>
+
+        <h3>value of t: <span id="valueOfT"></span></h3>
+        <canvas id="canvas" width="900" height="400"></canvas>
+        <script>
+            var firstPoint;
+            var secondPoint;
+            var thirdPoint;
+
+            $('#canvas').click(function (e) {
+                if (firstPoint && secondPoint) {
+                    thirdPoint = setPointFromUser(e);
+                    drawBezierCurve(firstPoint, secondPoint, thirdPoint);
+                    firstPoint = null;
+                    secondPoint = null;
+                } else if (!firstPoint) {
+                    firstPoint = setPointFromUser(e);
+                } else {
+                    secondPoint = setPointFromUser(e);
+                }
+            });
+
+            function setPointFromUser(event) {
+                var rect = canvas.getBoundingClientRect();
+
+                var x = event.clientX - rect.left;
+                var y = event.clientY - rect.top;
+
+                var point = new Point(x, y);
+
+                drawPoint(point, '#ff2626'); // Red
+                return point;
+            }
+
+            function drawBezierCurve(point1, point2, point3) {
+                var t = 0;
+                var inter = setInterval(function () {
+                    var bezierPoint1 = findBezierPoint(point1, point2, t);
+                    var bezierPoint2 = findBezierPoint(point2, point3, t);
+                    var mainBezierPoint = findBezierPoint(bezierPoint1, bezierPoint2, t);
+
+                    drawPoint(bezierPoint1, '#FDB813'); // Orange
+                    drawPoint(bezierPoint2, '#FDB813'); // Orange
+                    drawPoint(mainBezierPoint, '#458B00'); // Green
+
+                    $('#valueOfT').text(t.toFixed(2));
+                    t = t + 0.01;
+                    if (t > 1) {
+                        clearInterval(inter);
+                    }
+                }, 250);
+            }
+
+            function findBezierPoint(point1, point2, t) {
+                var x = (1 - t) * point1.x + t * point2.x;
+                var y = (1 - t) * point1.y + t * point2.y;
+
+                var newPoint = new Point(x, y);
+
+                return newPoint;
+            }
+
+            function drawPoint(point, color, pointSize) {
+                var pointSize = pointSize ? pointSize : 2;
+                var ctx = document.getElementById('canvas').getContext('2d');
+
+                ctx.fillStyle = color; // Green color
+
+                ctx.beginPath();
+                ctx.arc(point.x, point.y, pointSize, 0, Math.PI * 2, true);
+                ctx.fill();
+            }
+
+            function Point(x, y) {
+                var obj = {};
+                obj.x = x;
+                obj.y = y;
+                return obj;
+            }
+        </script>
+    </body>
+</html>

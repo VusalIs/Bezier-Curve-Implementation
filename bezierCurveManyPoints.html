@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+    <head>
+        <meta charset="utf-8" />
+        <title></title>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+        <style media="screen">
+            canvas {
+                border: 1px black solid;
+            }
+
+            .clearfix::after {
+                content: '';
+                clear: both;
+                display: table;
+            }
+        </style>
+    </head>
+    <body>
+        <form class="" id="form" method="post">
+            <button type="button" name="bspline" onclick="drawBezierCurve()">Draw B spline curve</button>
+        </form>
+
+        <canvas id="canvas" width="900" height="500"></canvas>
+        <script>
+            var points = [];
+            var knots = [];
+            var degree = 0;
+
+            function clear() {
+                location.reload();
+            }
+
+            $('#canvas').click(function (e) {
+                var point = setPointFromUser(e);
+                points.push(point);
+                drawPoint(point); // Black
+            });
+
+            function setPointFromUser(event) {
+                var rect = canvas.getBoundingClientRect();
+
+                var x = event.clientX - rect.left;
+                var y = event.clientY - rect.top;
+
+                var point = new Point(x, y);
+
+                Point(point);
+                return point;
+            }
+
+            function drawBezierCurve(point1, point2, point3) {
+                var t = 0;
+                var inter = setInterval(function () {
+                    var mainBezierPoint = findBezierPointOfPoints([...points], t);
+
+                    drawPoint(mainBezierPoint, '#458B00'); // Green
+
+                    $('#valueOfT').text(t.toFixed(2));
+                    t = t + 0.01;
+                    if (t > 1) {
+                        clearInterval(inter);
+                    }
+                }, 250);
+            }
+
+            function findBezierPointOfPoints(points, t) {
+                if (points.length == 1) {
+                    return points[0];
+                }
+                var tempPoint = [];
+                for (var i = 0; i < points.length - 1; i++) {
+                    tempPoint.push(findBezierPoint(points[i], points[i + 1], t));
+                }
+
+                return findBezierPointOfPoints([...tempPoint], t);
+            }
+
+            function findBezierPoint(point1, point2, t) {
+                var x = (1 - t) * point1.x + t * point2.x;
+                var y = (1 - t) * point1.y + t * point2.y;
+
+                var newPoint = new Point(x, y);
+
+                return newPoint;
+            }
+
+            function drawPoint(point, color) {
+                var ctx = document.getElementById('canvas').getContext('2d');
+
+                ctx.fillStyle = color;
+
+                ctx.beginPath();
+                ctx.arc(point.x, point.y, 2, 0, Math.PI * 2, true);
+                ctx.fill();
+            }
+
+            function Point(x, y) {
+                var obj = {};
+                obj.x = x;
+                obj.y = y;
+                return obj;
+            }
+        </script>
+    </body>
+</html>
