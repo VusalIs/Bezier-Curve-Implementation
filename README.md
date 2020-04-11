@@ -1,4 +1,4 @@
-# bsplinecurve
+# Bezier curve implementation
 
 This repostory shows different techniques to draw curves and lines which are used in computer graphics.
 
@@ -93,8 +93,8 @@ function drawBezierCurve(point1, point2, point3) {
         var bezierPoint2 = findBezierPoint(point2, point3, t);
         var mainBezierPoint = findBezierPoint(bezierPoint1, bezierPoint2, t);
 
-        drawPoint(bezierPoint1, '#FDB813'); // Orange
-        drawPoint(bezierPoint2, '#FDB813'); // Orange
+        drawPoint(bezierPoint1, '#FDB813'); // Yellow
+        drawPoint(bezierPoint2, '#FDB813'); // Yellow
         drawPoint(mainBezierPoint, '#458B00'); // Green
 
         $('#valueOfT').text(t.toFixed(2));
@@ -117,7 +117,7 @@ function findBezierPoint(point1, point2, t) {
 
 ![Demo line gif](demos/bezier_3points.gif)
 
-As you see, we firstly find the formula for pairs(orange points) of points, and draw imaginary line. After drawing this line, we find a formula of this line, and find a point with the same value of t(green point). Result point is our first point for bezier curve. We do the same till draw a complete curve.
+As you see, we firstly find the formula for pairs(yellow points) of points, and draw imaginary line. After drawing this line, we find a formula of this line, and find a point with the same value of t(green point). Result point is our first point for bezier curve. We do the same till draw a complete curve.
 
 ---
 
