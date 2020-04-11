@@ -1,5 +1,11 @@
 # Bezier curve implementation
 
+## Demo
+
+You can use following link to see demo: https://vusalis.github.io/Bezier-curve-implementation/
+
+## Introduction
+
 This repostory shows different techniques to draw curves and lines which are used in computer graphics.
 
 -   [Draw Line based on middle points](#draw-line-based-on-middle-points)
