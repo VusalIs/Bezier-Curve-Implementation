@@ -8,6 +8,12 @@ This repostory shows different techniques to draw curves and lines which are use
 
 # Draw Line based on middle points
 
-This method does not require a lot of explanation, cause it is so straight forward technique. When we want to use this technique, we just define two points and recursively find middle points. In my case iteration is 5.
+This method does not require a lot of explanation, cause it is so straight forward technique. When we want to use this technique, we just define two points and recursively find middle points. In my case, count of iterations is 5.
 
-![Demo middle point line](demos/demo-middle.gif)
+![Demo middle gif](demos/demo-middle.gif)
+
+# Draw Line based on bezier method
+
+Another method to draw a line is find a linear function which will look like y = k \* x + b. After finding this function, you can increase the value of x and put a dote in this point.
+
+![Demo line gif](demos/demo-line.gif)
