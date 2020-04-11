@@ -1,106 +1,95 @@
 <!DOCTYPE html>
 <html>
-<head>
-	<title></title>
-	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-	<style type="text/css">
-		canvas{
-			border: 1px black solid;
-		}
-	</style>
-</head>
-<body>
+    <head>
+        <title></title>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+        <style type="text/css">
+            canvas {
+                border: 1px black solid;
+            }
+        </style>
+    </head>
+    <body>
+        <canvas id="canvas" width="900" height="500"></canvas>
+        <script>
+            var init;
 
+            $('#canvas').click(function (e) {
+                if (init) {
+                    drawLine(e);
+                    init = null;
+                } else {
+                    init = initialPoint(e);
+                }
+            });
 
+            var pointSize = 2;
 
-<canvas id="canvas" width="900" height="500" ></canvas>
-<script>
-	var init;
+            function initialPoint(event) {
+                var rect = canvas.getBoundingClientRect();
 
-	$("#canvas").click(function(e){
-		if (init) {
-			drawLine(e);
-			init = null;
-		}
-		else{
-			init = initialPoint(e);
-		}
+                var x = event.clientX - rect.left;
+                var y = event.clientY - rect.top;
 
-	});
+                var point = new Point(x, y);
 
-	var pointSize = 2;
+                drawPoint(point);
+                return point;
+            }
 
-	function initialPoint(event){
-	  	var rect = canvas.getBoundingClientRect();
+            function Point(x, y) {
+                var obj = {};
+                obj.x = x;
+                obj.y = y;
+                return obj;
+            }
 
-	  	var x = event.clientX - rect.left;
-	    var y = event.clientY - rect.top;
+            function drawLine(event) {
+                var rect = canvas.getBoundingClientRect();
+                var x = event.clientX - rect.left;
+                var y = event.clientY - rect.top;
 
-	    var point = new Point(x,y);
+                var newPoint = new Point(x, y);
 
-	     drawPoint(point);
-	     return point;
-	}
+                var iter = 5;
 
-	function Point(x,y){
-			var obj = {};
-			obj.x = x;
-			obj.y = y;
-			return obj;
-	}
+                var midllePoint = new Point((init.x + newPoint.x) / 2, (init.y + newPoint.y) / 2);
 
-	function drawLine(event){
-	     var rect = canvas.getBoundingClientRect();
-	     var x = event.clientX - rect.left;
-	     var y = event.clientY - rect.top;
+                drawPoint(newPoint);
 
-	     var newPoint = new Point(x,y);
+                drawPoint(midllePoint);
+                recursive(init, newPoint, iter);
+            }
 
+            function recursive(point1, point2, iter) {
+                if (iter == 0) {
+                    return 1;
+                }
 
-	     var iter = 10;
+                var x = (point1.x + point2.x) / 2;
+                var y = (point1.y + point2.y) / 2;
 
+                var midllePoint = new Point(x, y);
 
+                drawPoint(midllePoint);
 
-	     var midllePoint = new Point((init.x+newPoint.x)/2,(init.y+newPoint.y)/2)
+                iter = iter - 1;
 
-	     drawPoint(newPoint)
+                setTimeout(function () {
+                    recursive(point2, midllePoint, iter);
+                    recursive(point1, midllePoint, iter);
+                }, 1500);
+            }
 
-	     drawPoint(midllePoint);
-	     recursive(init,newPoint,iter);
-	}
+            function drawPoint(point) {
+                var ctx = document.getElementById('canvas').getContext('2d');
 
-	function recursive(point1,point2,iter){
-		if(iter == 0){
-	  	return 1;
-	  }
+                ctx.fillStyle = '#ff2626'; // Red color
 
-		var x = (point1.x + point2.x)/2;
-	  	var y = (point1.y + point2.y)/2;
-
-	  	var midllePoint = new Point(x,y);
-
-		  drawPoint(midllePoint);
-
-		  iter= iter - 1;
-
-		  setTimeout(function(){
-			    recursive(point2,midllePoint,iter);
-			    recursive(point1,midllePoint,iter);
-			},500);
-
-
-	}
-
-	function drawPoint(point){
-	  	var ctx = document.getElementById("canvas").getContext("2d");
-
-
-	  	ctx.fillStyle = "#ff2626"; // Red color
-
-	    ctx.beginPath();
-	    ctx.arc(point.x, point.y, pointSize, 0, Math.PI * 2, true);
-	    ctx.fill();
-	}
-</script>
-</body>
+                ctx.beginPath();
+                ctx.arc(point.x, point.y, pointSize, 0, Math.PI * 2, true);
+                ctx.fill();
+            }
+        </script>
+    </body>
 </html>
