@@ -14,6 +14,8 @@ This repostory shows different techniques to draw curves and lines which are use
 
 # Draw Line based on middle points
 
+![Demo middle gif](demos/middle_line.gif)
+
 This method does not require a lot of explanation, cause it is so straight forward technique. When we want to use this technique, we just define two points and recursively find middle points. In my case, count of iterations is 5.
 
 ```javascript
@@ -38,9 +40,9 @@ function recursive(point1, point2, iter) {
 }
 ```
 
-![Demo middle gif](demos/middle_line.gif)
-
 # Draw Line based on bezier method
+
+![Demo line gif](demos/bezier_line.gif)
 
 Another method to draw a line is find a linear formula of clicked points which will look like `y = m * x + b`. After finding m and b, you can increase the value of x and get the corresponding y and put a dote in this point.
 
@@ -83,9 +85,9 @@ function findMandB(point1, point2) {
 }
 ```
 
-![Demo line gif](demos/bezier_line.gif)
-
 # Draw Curves based on bezier method
+
+![Demo line gif](demos/bezier_3points.gif)
 
 We used y = m \* x + b formula, but how it will help us to draw Bezier curve. The formula of Bezier curve depends on how many entry points you enter. For example, for 2 points formula is `P = (1-t) * P1 * P2`, for 3 points formula is `P = (1-t)^2 * P1 + 2 * (1−t) * t * P2 + t^2 * P3` and so on. But we look at deeply, it is just many `y = m * x + b` formulas. Let's look at an example with 3 points:
 
@@ -120,8 +122,6 @@ function findBezierPoint(point1, point2, t) {
     return newPoint;
 }
 ```
-
-![Demo line gif](demos/bezier_3points.gif)
 
 As you see, we firstly find the formula for pairs(yellow points) of points, and draw imaginary line. After drawing this line, we find a formula of this line, and find a point with the same value of t(green point). Result point is our first point for bezier curve. We do the same till draw a complete curve.
 
